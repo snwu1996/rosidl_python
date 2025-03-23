@@ -435,8 +435,28 @@ if member.name in dict(inspect.getmembers(builtins)).keys():
         """Message field '@(member.name)'."""
         return self._@(member.name)
 
+@# Define setter with type annotations.
     @@@(member.name).setter@(noqa_string)
+@[  if isinstance(member.type, AbstractNestedType)]@
+    def @(member.name)(self, value: Sequence | Set | UserList):@(noqa_string)
+@[  elif isinstance(member.type, AbstractGenericString) and member.type.has_maximum_size()]@
+    def @(member.name)(self, value: UserString):@(noqa_string)
+@[  elif isinstance(type_, NamespacedType)]@
+    def @(member.name)(self, value: @(type_.name)):@(noqa_string)
+@[  elif isinstance(type_, BasicType) and type_.typename == 'octet']@
+    def @(member.name)(self, value: bytes | ByteString):@(noqa_string)
+@[  elif isinstance(type_, BasicType) and type_.typename == 'char']@
+    def @(member.name)(self, value: str | UserString):@(noqa_string)
+@[  elif isinstance(type_, AbstractGenericString)]@
+    def @(member.name)(self, value: str):@(noqa_string)
+@[  elif isinstance(type_, BasicType) and type_.typename in (BOOLEAN_TYPE, *FLOATING_POINT_TYPES, *INTEGER_TYPES)]@
+    def @(member.name)(self, value: @(get_python_type(type_))):@(noqa_string)
+@[  else]@
     def @(member.name)(self, value):@(noqa_string)
+    # Should not be here!!!
+    # @(member.name) | @(get_python_type(type_)) | @(type_)
+@[  end if]@
+@# end: Define setter with type annotations.
         if self._check_fields:
 @[  if isinstance(member.type, AbstractNestedType) and isinstance(member.type.value_type, BasicType) and member.type.value_type.typename in SPECIAL_NESTED_BASIC_TYPES]@
 @[    if isinstance(member.type, Array)]@
