@@ -453,8 +453,6 @@ if member.name in dict(inspect.getmembers(builtins)).keys():
     def @(member.name)(self, value: @(get_python_type(type_))):@(noqa_string)
 @[  else]@
     def @(member.name)(self, value):@(noqa_string)
-    # Should not be here!!!
-    # @(member.name) | @(get_python_type(type_)) | @(type_)
 @[  end if]@
 @# end: Define setter with type annotations.
         if self._check_fields:
