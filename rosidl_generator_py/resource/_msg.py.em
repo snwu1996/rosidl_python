@@ -88,6 +88,28 @@ for member in message.structure.members:
 @#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
+@#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+@[for member in message.structure.members]@
+@[  if len(message.structure.members) == 1 and member.name == EMPTY_STRUCTURE_REQUIRED_MEMBER_NAME]@
+@[    continue]@
+@[  end if]@
+@[  if member.has_annotation('default')]@
+@[  else]@
+@[    if isinstance(type_, NamespacedType) and not isinstance(member.type, AbstractSequence)]@
+@[      if (
+            type_.name.endswith(ACTION_GOAL_SUFFIX) or
+            type_.name.endswith(ACTION_RESULT_SUFFIX) or
+            type_.name.endswith(ACTION_FEEDBACK_SUFFIX)
+        )]@
+        from @('.'.join(type_.namespaces))._@(convert_camel_case_to_lower_case_underscore(type_.name.rsplit('_', 1)[0])) import @(type_.name)
+@[      else]@
+        from @('.'.join(type_.namespaces)) import @(type_.name)
+@[      end if]@
+@[    end if]@
+@[end for]@
+@#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
 class Metaclass_@(message.structure.namespaced_type.name)(type):
     """Metaclass of message '@(message.structure.namespaced_type.name)'."""
 
